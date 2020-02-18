@@ -24,20 +24,28 @@ nc <- function(x) {comma(x, digits = 0)}
 
 Background information: Why are we researching this topic? What is the expected product? A blog post? Analysis for an internal or external partner?
 
-> **Research Question**
-What are the top evictors in the state of Oklahoma? (Tulsa, Oklahoma, Cleveland, Canadian)
-# Data sources
+> **What are the top 10 evictors in Oklahoma's top four most populous counties? (Tulsa, Oklahoma, Cleveland, Canadian)**
 
-Where is the data from? The ojo database? OSCN? ODCR? Crime in Oklahoma reports? 
+> **Approximately how many evictions were filed in each court from 2018-2019?**
+> **Approximately how many different plaintiffs filed evictions?**
+> **What percentage of filers accounted for 50 percent of the evictions?**
+
+
+# Data sources
 OSCN small claims database
+
 ## Timeframe
 
-What years/months are you looking at? Year of case filing, first disposition, prison admission, etc.? Be as specific as possible.
-From 2018 on (??)
-## Geography
+Cases filed in 2018 and 2019
 
-What courts/counties/states are you looking at?
+## Geography
+Oklahoma's four most populous counties:
+- Oklahoma
+- Tulsa
+- Cleveland
+- Canadian
 Tulsa county, Oklahoma county, maybe Cleveland and Canadian county
+
 ## Variables
 
 What variables did you use? What types of cases, crimes, etc.?
@@ -48,8 +56,10 @@ If you're using data from the OJO database, include the query you used to pull y
 
 ``` {r}
 # d <- ojo_query_disps("TULSA", "CM", 2019)
+
+okevic <- ojo_query_disps(c("TULSA", "OKLAHOMA"), "SC", 2018:2019)
 ```
-okevic <- ojo_query disps("TULSA","OKLAHOMA", "SC", )
+
 # Checking Data
 
 Explain the results of the checks of your data.
