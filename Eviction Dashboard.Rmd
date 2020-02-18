@@ -25,23 +25,23 @@ nc <- function(x) {comma(x, digits = 0)}
 Background information: Why are we researching this topic? What is the expected product? A blog post? Analysis for an internal or external partner?
 
 > **Research Question**
-
+What are the top evictors in the state of Oklahoma? (Tulsa, Oklahoma, Cleveland, Canadian)
 # Data sources
 
 Where is the data from? The ojo database? OSCN? ODCR? Crime in Oklahoma reports? 
-
+OSCN small claims database
 ## Timeframe
 
 What years/months are you looking at? Year of case filing, first disposition, prison admission, etc.? Be as specific as possible.
-
+From 2018 on (??)
 ## Geography
 
 What courts/counties/states are you looking at?
-
+Tulsa county, Oklahoma county, maybe Cleveland and Canadian county
 ## Variables
 
 What variables did you use? What types of cases, crimes, etc.?
-
+iss_description Forcible entry and detainer
 ## Query
 
 If you're using data from the OJO database, include the query you used to pull your data. This may be a function that starts `ojo_query_` or `dbGetQuery`.
@@ -49,7 +49,7 @@ If you're using data from the OJO database, include the query you used to pull y
 ``` {r}
 # d <- ojo_query_disps("TULSA", "CM", 2019)
 ```
-
+okevic <- ojo_query disps("TULSA","OKLAHOMA", "SC", )
 # Checking Data
 
 Explain the results of the checks of your data.
