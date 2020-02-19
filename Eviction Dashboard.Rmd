@@ -20,6 +20,19 @@ library(knitr)
 
 nc <- function(x) {comma(x, digits = 0)}
 
+### Plaintiff cleaning function
+windex <- function(x) {
+  str_remove_all({{x}}, " INC| CO(?=($| ))|LLC|LP|LIMITED PARTNERSHIP|QLA|[[:punct:]]|THE | PHASE.{1,30}$|COMPANY|C\\/O.{1,30}| (AT|OF)(?= )| AND|II|DBA.*") %>% 
+    str_replace_all("APT([[:alpha:]]|)|APARTMENT([[:alpha:]]|)$|APARTMENT HOMES", "APARTMENTS") %>% 
+    str_replace("MHC|MHP|MOBILE HOME.*", "MOBILE HOMES") %>% 
+    str_remove_all(" [[:alpha:]]$") %>% 
+    str_squish %>%
+    str_replace("HOUSING AUTH.*", "TULSA HOUSING AUTHORITY") %>% 
+    str_replace("MENTAL HEALTH AS.*", "MENTAL HEALTH ASSOCIATION") %>% 
+    str_replace("CHAT.*68.*", "CHATEAU 68 APARTMENTS") %>% 
+    str_replace("J A AVONDALE", "JA AVONDALE")
+}
+
 ```
 
 Background information: Why are we researching this topic? What is the expected product? A blog post? Analysis for an internal or external partner?
@@ -27,7 +40,7 @@ Background information: Why are we researching this topic? What is the expected 
 > **What are the top 10 evictors in Oklahoma's top four most populous counties? (Tulsa, Oklahoma, Cleveland, Canadian)**
 
 > **Approximately how many evictions were filed in each court from 2018-2019?**
-> **Approximately how many different plaintiffs filed evictions?**
+> **Approximately how many different plaintiffs filed evictions in each court?**
 > **What percentage of filers accounted for 50 percent of the evictions?**
 
 
@@ -112,26 +125,43 @@ okevict %>%
 ```
 ```{r}
 okevict <- okevict %>% 
-  group_by(casenum) %>% 
+  group_by(court, casenum) %>% 
   slice(1)
 ```
+
+Describe what you're looking for in each of these chunks
+
 ```{r}
 year <- okevict %>% 
   ungroup %>% 
   count(court)
 ```
+
 ```{r}
 plaintiff <- okevict %>% 
   ungroup %>% 
-  count(iss_plaint) %>% 
+  count(court, iss_plaint) %>% 
   arrange(desc(n))
 ```
+
 ```{r}
+tulsa <- okevict %>% 
+  filter(court == "TULSA") %>% 
+  mutate(plaint_clean = windex(iss_plaint))
+
+
 plaintcount <- okevict %>% 
   ungroup %>% 
   count(iss_plaint,court) %>% 
   arrange(desc(n)) %>% 
   group_by(court)
+
+tulsacount <- tulsa %>% 
+  ungroup %>% 
+  count(court, plaint_clean) %>% 
+  arrange(desc(n)) %>% 
+  group_by(court)
+
 ```
 
 
