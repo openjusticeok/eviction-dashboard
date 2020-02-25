@@ -33,6 +33,15 @@ windex <- function(x) {
     str_replace("J A AVONDALE", "JA AVONDALE")
 }
 
+windex_cleve <- function(x) {
+  str_remove_all({{x}}, " INC| CO(?=($| ))|LLC|LP|LIMITED PARTNERSHIP|QLA|[[:punct:]]|THE | PHASE.{1,30}$|COMPANY|C\\/O.{1,30}| (AT|OF)(?= )| AND|II|DBA.*") %>% 
+    str_replace_all("APT([[:alpha:]]|)|APARTMENT([[:alpha:]]|)$|APARTMENT HOMES", "APARTMENTS") %>% 
+    str_remove_all(" [[:alpha:]]$") %>% 
+    str_squish %>%
+    str_replace("COUNTRY CREEK APARTMENTS", "COUNTRY CREEK") %>% 
+    str_replace(".*CROSS TIMBER.*", "CROSS TIMBERS APARTMENTS")
+}
+
 ```
 
 Background information: Why are we researching this topic? What is the expected product? A blog post? Analysis for an internal or external partner?
@@ -68,8 +77,6 @@ iss_description Forcible entry and detainer
 If you're using data from the OJO database, include the query you used to pull your data. This may be a function that starts `ojo_query_` or `dbGetQuery`.
 
 ``` {r}
-# d <- ojo_query_disps("TULSA", "CM", 2019)
-
 okevic <- ojo_query_disps(c("TULSA", "OKLAHOMA", "CLEVELAND", "CANADIAN"), "SC", 2018:2019)
 ```
 
@@ -82,7 +89,6 @@ Explain the results of the checks of your data.
 If you're using court data, you can use the `ojo_check_comp` to see how complete the data is.
 
 ```{r}
-# ojo_check_comp(sc)
 ojo_check_comp(okevic)
 ```
 
@@ -91,10 +97,6 @@ ojo_check_comp(okevic)
 Detail the NAs and blank items in your data and, if necessary and possible, fill them in.
 
 ``` {r}
-# rog_nas <- rog %>% 
-#   summarize(nas = sum(is.na(defname) | defname == "")) # checks for NA and blank ("") defendant names
-# 
-# rog_nas
 nas <- okevic %>% 
   group_by(casenum) %>% 
   filter(all(is.na(defname)| defname ==""))
@@ -113,41 +115,76 @@ Because each analysis project is a bit different, the number and length of subse
 okevic %>% 
   count(iss_desc) %>% 
   arrange(desc(n))
-```
-```{r}
+
 okevict <- okevic %>% 
   filter(str_detect(iss_desc, "FORCI"))
-```
-```{r}
+
 okevict %>% 
   count(iss_plaint) %>% 
   arrange(desc(n))
-```
-```{r}
+
 okevict <- okevict %>% 
   group_by(court, casenum) %>% 
   slice(1)
 ```
 
+### Fill plaintiff names for Cleveland County
+
+``` {r}
+cleve <- okevict %>% 
+  filter(court == "CLEVELAND") %>% 
+  select(-iss_plaint)
+
+connect_ojo()
+cleve_plaints <- dbGetQuery(ojo_db, "SELECT *
+                            FROM oscn_party_names
+                            WHERE court = 'CLEVELAND'
+                            AND file_year > 2017
+                            AND casetype = 'SC'")
+disconnect_ojo()
+
+cleve_plaints <- cleve_plaints %>% 
+  filter(party_type == "Plaintiff") %>%
+  group_by(court, casenum) %>% 
+  slice(1) %>% 
+  select(casenum, iss_plaint = party)
+
+cleve <- cleve %>% 
+  left_join(cleve_plaints)
+
+okevict <- okevict %>% 
+  filter(!court == "CLEVELAND") %>% 
+  bind_rows(cleve)
+  
+```
+
 Describe what you're looking for in each of these chunks
+
+How many cases were filed in each court, 2018-2019?
 
 ```{r}
 year <- okevict %>% 
   ungroup %>% 
   count(court)
+
+year
 ```
+Who were the top evictors in each of these counties?
 
 ```{r}
 plaintiff <- okevict %>% 
   ungroup %>% 
   count(court, iss_plaint) %>% 
   arrange(desc(n))
+
+plaintiff
 ```
 
 ```{r}
 tulsa <- okevict %>% 
   filter(court == "TULSA") %>% 
   mutate(plaint_clean = windex(iss_plaint))
+
 tulsacount <- tulsa %>% 
   ungroup %>% 
   count(court, plaint_clean) %>% 
@@ -157,6 +194,7 @@ tulsacount <- tulsa %>%
 oklahoma <- okevict %>% 
   filter(court == "OKLAHOMA") %>% 
   mutate(plaint_clean = windex(iss_plaint))
+
 oklahomacount <- oklahoma %>% 
   ungroup %>% 
   count(court, plaint_clean) %>% 
@@ -165,16 +203,19 @@ oklahomacount <- oklahoma %>%
 
 cleveland <- okevict %>% 
   filter(court == "CLEVELAND") %>% 
-  mutate(plaint_clean = windex(iss_plaint))
+  mutate(plaint_clean = windex_cleve(iss_plaint))
+
 clevelandcount <- cleveland %>% 
   ungroup %>% 
   count(court, plaint_clean) %>% 
   arrange(desc(n)) %>% 
   group_by(court)
 
+
 canadian <- okevict %>% 
   filter(court == "CANADIAN") %>% 
   mutate(plaint_clean = windex(iss_plaint))
+
 canadiancount <- canadian %>% 
   ungroup %>% 
   count(court, plaint_clean) %>% 
@@ -184,7 +225,17 @@ canadiancount <- canadian %>%
 
 ```
 
+```{r}
+tulsacount
 
+sum(tulsacount$n)/2
+
+tulsacount <- tulsacount %>% 
+  mutate(rank = row_number(),
+        rolling_sum = cumsum(n))
+  
+
+```
 
 ## Measure 1
 
