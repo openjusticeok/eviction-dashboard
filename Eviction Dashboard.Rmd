@@ -148,19 +148,39 @@ plaintiff <- okevict %>%
 tulsa <- okevict %>% 
   filter(court == "TULSA") %>% 
   mutate(plaint_clean = windex(iss_plaint))
-
-
-plaintcount <- okevict %>% 
-  ungroup %>% 
-  count(iss_plaint,court) %>% 
-  arrange(desc(n)) %>% 
-  group_by(court)
-
 tulsacount <- tulsa %>% 
   ungroup %>% 
   count(court, plaint_clean) %>% 
   arrange(desc(n)) %>% 
   group_by(court)
+
+oklahoma <- okevict %>% 
+  filter(court == "OKLAHOMA") %>% 
+  mutate(plaint_clean = windex(iss_plaint))
+oklahomacount <- oklahoma %>% 
+  ungroup %>% 
+  count(court, plaint_clean) %>% 
+  arrange(desc(n)) %>% 
+  group_by(court)
+
+cleveland <- okevict %>% 
+  filter(court == "CLEVELAND") %>% 
+  mutate(plaint_clean = windex(iss_plaint))
+clevelandcount <- cleveland %>% 
+  ungroup %>% 
+  count(court, plaint_clean) %>% 
+  arrange(desc(n)) %>% 
+  group_by(court)
+
+canadian <- okevict %>% 
+  filter(court == "CANADIAN") %>% 
+  mutate(plaint_clean = windex(iss_plaint))
+canadiancount <- canadian %>% 
+  ungroup %>% 
+  count(court, plaint_clean) %>% 
+  arrange(desc(n)) %>% 
+  group_by(court)
+
 
 ```
 
