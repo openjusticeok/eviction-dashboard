@@ -166,7 +166,8 @@ okevict <- okevict %>%
 Describe what you're looking for in each of these chunks
 
 How many cases were filed in each court, 2018-2019?
-### this step gives us a break down of how many evictions were filed in each court from 2018-2019?
+
+This step gives us a break down of how many evictions were filed in each court from 2018-2019?
 
 ```{r}
 year <- okevict %>% 
@@ -176,7 +177,8 @@ year <- okevict %>%
 year
 ```
 Who were the top evictors in each of these counties?
-### this step tells us how many evictions were filed in each court from 2018-2019?
+This step tells us how many evictions were filed in each court from 2018-2019? 
+
 ```{r}
 plaintiff <- okevict %>% 
   ungroup %>% 
@@ -185,7 +187,8 @@ plaintiff <- okevict %>%
 
 plaintiff
 ```
-### this step gives us who are the top 10 evictors in Oklahoma's top four most populous counties by cleaning the plaintiff names and counting how many cases they have filed and the data frame is then arranged in a descending order 
+
+This step gives us who are the top 10 evictors in Oklahoma's top four most populous counties by cleaning the plaintiff names and counting how many cases they have filed and the data frame is then arranged in a descending order 
 
 ```{r}
 tulsa <- okevict %>% 
