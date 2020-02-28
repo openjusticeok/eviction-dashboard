@@ -244,6 +244,15 @@ tulsacount <- tulsacount %>%
   mutate(rank = row_number(),
         rolling_sum = cumsum(n))
   
+totalcount1 <- merge(tulsacount, oklahomacount, by = c("court", "plaint_clean", "n"))
+totalcount2 <- rbind(tulsacount, oklahomacount)
+totalcount <- rbind(tulsacount, oklahomacount, clevelandcount, canadiancount)
+sum(totalcount$n)/2
+totalcount <- totalcount %>%
+  ungroup %>% 
+  arrange(desc(n)) %>% 
+   mutate(rank = row_number(),
+        rolling_sum = cumsum(n))
 
 ```
 
