@@ -75,7 +75,7 @@ iss_description Forcible entry and detainer
 ## Query
 
 If you're using data from the OJO database, include the query you used to pull your data. This may be a function that starts `ojo_query_` or `dbGetQuery`.
-
+###This step queries all the small claims court data from the 4 counties into a data frame 
 ``` {r}
 okevic <- ojo_query_disps(c("TULSA", "OKLAHOMA", "CLEVELAND", "CANADIAN"), "SC", 2018:2019)
 ```
@@ -87,7 +87,7 @@ Explain the results of the checks of your data.
 ## Check for Completeness
 
 If you're using court data, you can use the `ojo_check_comp` to see how complete the data is.
-
+###this step checks the completeness of the data 
 ```{r}
 ojo_check_comp(okevic)
 ```
@@ -95,7 +95,7 @@ ojo_check_comp(okevic)
 ## Check for NAs
 
 Detail the NAs and blank items in your data and, if necessary and possible, fill them in.
-
+###this step filters out the dispositions without a defendant name
 ``` {r}
 nas <- okevic %>% 
   group_by(casenum) %>% 
@@ -111,10 +111,13 @@ If you're looking at numeric data, look at the highest and lowest values and exp
 This is where you'll likely spend the biggest chunk of time if you're using court data. There are a lot of ways things can go wrong, so we want to be able to trace back all of our steps and document all the decisions we're making.
 
 Because each analysis project is a bit different, the number and length of subsections in this section will vary a lot. 
+### this step will give us a list of issues filed in the small claims courts
 ```{r}
 okevic %>% 
   count(iss_desc) %>% 
   arrange(desc(n))
+
+### this step filters out only the eviction cases from the data frame
 
 okevict <- okevic %>% 
   filter(str_detect(iss_desc, "FORCI"))
@@ -122,6 +125,8 @@ okevict <- okevic %>%
 okevict %>% 
   count(iss_plaint) %>% 
   arrange(desc(n))
+
+### this step changed the data frame from dispositions to actual cases by only saving one casenumber for each disposition 
 
 okevict <- okevict %>% 
   group_by(court, casenum) %>% 
@@ -161,6 +166,7 @@ okevict <- okevict %>%
 Describe what you're looking for in each of these chunks
 
 How many cases were filed in each court, 2018-2019?
+### this step gives us a break down of how many evictions were filed in each court from 2018-2019?
 
 ```{r}
 year <- okevict %>% 
@@ -170,7 +176,7 @@ year <- okevict %>%
 year
 ```
 Who were the top evictors in each of these counties?
-
+### this step tells us how many evictions were filed in each court from 2018-2019?
 ```{r}
 plaintiff <- okevict %>% 
   ungroup %>% 
@@ -179,6 +185,7 @@ plaintiff <- okevict %>%
 
 plaintiff
 ```
+### this step gives us who are the top 10 evictors in Oklahoma's top four most populous counties by cleaning the plaintiff names and counting how many cases they have filed and the data frame is then arranged in a descending order 
 
 ```{r}
 tulsa <- okevict %>% 
@@ -224,7 +231,7 @@ canadiancount <- canadian %>%
 
 
 ```
-
+### this step calculates what percentage of evictors accounted for 50% of all eviction filings
 ```{r}
 tulsacount
 
