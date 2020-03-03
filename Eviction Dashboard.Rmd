@@ -243,7 +243,7 @@ sum(tulsacount$n)/2
 tulsacount <- tulsacount %>% 
   mutate(rank = row_number(),
         rolling_sum = cumsum(n))
-  
+
 totalcount1 <- merge(tulsacount, oklahomacount, by = c("court", "plaint_clean", "n"))
 totalcount2 <- rbind(tulsacount, oklahomacount)
 totalcount <- rbind(tulsacount, oklahomacount, clevelandcount, canadiancount)
