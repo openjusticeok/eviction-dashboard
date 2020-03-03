@@ -256,9 +256,25 @@ totalcount <- totalcount %>%
 
 ```
 
-## Measure 1
+## Graph portion of evictions filed by top evictors
 
-Describe how you defined the first measure.
+``` {r}
+top_evictor <- totalcount %>% 
+  mutate(top50percent = rank <= 240) %>% 
+  group_by(top50percent) %>% 
+  summarize(total_plaintiffs = n(),
+            total_evictions = sum(n)) %>% 
+  pivot_longer(cols = matches("total"),
+               names_to = "figure")
+
+ggplot(top_evictor, aes(figure, value, fill = top50percent)) +
+  geom_bar(stat = "identity", position = "fill") +
+  theme_ojo() +
+  scale_fill_manual(values = ojo_pal) +
+  ggtitle("Two percent of plaintiffs file half\nof all evictions")
+
+```
+
 
 # Summarizing and Visualizing Data
 
