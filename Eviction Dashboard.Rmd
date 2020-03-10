@@ -274,6 +274,40 @@ ggplot(top_evictor, aes(figure, value, fill = top50percent)) +
   ggtitle("Two percent of plaintiffs file half\nof all evictions")
 
 ```
+```{r}
+tulsatop <- tulsacount %>% 
+  slice(1:10)
+ggplot(tulsatop, aes(x=reorder(plaint_clean, n), y=n))+
+  geom_bar(stat = "identity", fill ="#F8D64E") +
+  theme_ojo() +
+  scale_fill_manual(values = ojo_pal) +
+  ggtitle("Tulsa County Top Evictors")+
+  coord_flip()
+oklahomatop <- oklahomacount %>% 
+  slice(1:10)
+ggplot(oklahomatop, aes(x=reorder(plaint_clean, n), y=n))+
+  geom_bar(stat = "identity", fill ="#F8D64E") +
+  theme_ojo() +
+  scale_fill_manual(values = ojo_pal) +
+  ggtitle("Oklahoma County Top Evictors")+
+  coord_flip()
+clevelandtop <- clevelandcount %>% 
+  slice(1:10)
+ggplot(clevelandtop, aes(x=reorder(plaint_clean, n), y=n))+
+  geom_bar(stat = "identity", fill ="#F8D64E") +
+  theme_ojo() +
+  scale_fill_manual(values = ojo_pal) +
+  ggtitle("Cleveland County Top Evictors")+
+  coord_flip()
+canadiantop <- canadiancount %>% 
+  slice(1:10)
+ggplot(canadiantop, aes(x=reorder(plaint_clean, n), y=n))+
+  geom_bar(stat = "identity", fill ="#F8D64E") +
+  theme_ojo() +
+  scale_fill_manual(values = ojo_pal) +
+  ggtitle("Canadian County Top Evictors")+
+  coord_flip()
+```
 
 
 # Summarizing and Visualizing Data
