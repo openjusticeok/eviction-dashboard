@@ -14,7 +14,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-library(ojo)
+library(ojodb)
 library(knitr)
 
 
@@ -89,7 +89,7 @@ Explain the results of the checks of your data.
 If you're using court data, you can use the `ojo_check_comp` to see how complete the data is.
 ###this step checks the completeness of the data 
 ```{r}
-ojo_check_comp(okevic)
+#ojo_check_comp(okevic)
 ```
 
 ## Check for NAs
